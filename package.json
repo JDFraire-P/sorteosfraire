@@ -7,11 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "populate-db": "tsx src/scripts/populateDB.ts"
+    "seed": "tsx src/scripts/populateDB.ts"
   },
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "ioredis": "^5.5.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
     "next": "15.1.7",
     "pusher": "^5.2.0",
@@ -21,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
