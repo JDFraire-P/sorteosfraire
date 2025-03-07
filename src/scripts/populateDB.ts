@@ -5,6 +5,8 @@ import Sorteo from "@/models/Sorteo";
 import Cliente, { ICliente } from "@/models/Cliente";
 import Folio from "@/models/Folio";
 import Boleto from "@/models/Boleto";
+import { randomUUID } from "crypto";
+
 
 // Utilidad para generar números aleatorios en un rango
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -79,28 +81,28 @@ const createTestData = async () => {
   // 4. Por cada Cliente, crear de 0 a 3 Folios y sus Boletos asociados
   for (const cliente of clientes) {
     const foliosCount = randomInt(0, 3); // 0 a 3 folios por cliente
-
     for (let f = 0; f < foliosCount; f++) {
       // Seleccionar aleatoriamente uno de los 2 sorteos para este folio
       const sorteo = sorteos[randomInt(0, sorteos.length - 1)];
       // Escoger estado aleatorio para el folio ("pendiente" o "pagado")
       const folioEstado = Math.random() < 0.5 ? "pendiente" : "pagado";
-
-      // Primero creamos el folio sin boletos (para obtener su _id)
+    
+      // Crear el folio con los campos requeridos:
       const folio = new Folio({
+        uid: randomUUID(), // Genera un UID único para el folio
         cliente: cliente._id,
         boletos: [],
         total: 0, // Se actualizará luego
         estado: folioEstado,
-        fechaGeneracion: new Date(),
+        fechaApartado: new Date(), // Utiliza la propiedad que define el modelo
         fechaConfirmacion: folioEstado === "pagado" ? new Date() : undefined
       });
       await folio.save();
-
+    
       // Generar entre 1 y 20 boletos para este folio
       const boletosCount = randomInt(1, 20);
       const boletosIds: mongoose.Types.ObjectId[] = [];
-
+    
       for (let b = 0; b < boletosCount; b++) {
         // Obtener el siguiente número de boleto para el sorteo
         const currentBoletoNumber = boletoCounters[sorteo._id.toString()]++;
@@ -114,13 +116,13 @@ const createTestData = async () => {
         await boleto.save();
         boletosIds.push(boleto._id);
       }
-
+    
       // Calcular el total según el precio definido en el sorteo (usamos el primer precio)
       const precioUnitario = sorteo.precios[0].precio;
       folio.boletos = boletosIds;
       folio.total = boletosCount * precioUnitario;
       await folio.save();
-    }
+    }    
   }
   console.log("📑 Folios y boletos creados para los clientes.");
 

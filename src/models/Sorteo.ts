@@ -1,18 +1,23 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-interface Precio {
-  cantidad: number;
-  precio: number;
+export interface PremioSorteo {
+  descripcion: string; // Descripción del premio
+  Condiciones: string; // Condiciones del premio
+}
+
+export interface PrecioBoleto {
+  cantidad: number; // Cantidad de boletos
+  precio: number; // Precio por boleto
 }
 
 export interface ISorteo extends Document {
   titulo: string;
   descripcion: string;
-  premioPrincipal: string;
+  premios: PremioSorteo[];
   fechaInicio: Date;
   fechaSorteo: Date;
   condiciones: string;
-  precios: Precio[];
+  precios: PrecioBoleto[];
   tiempoSeleccion: number;
   tiempoApartado: number;
 }
@@ -20,7 +25,7 @@ export interface ISorteo extends Document {
 const SorteoSchema = new Schema<ISorteo>({
   titulo: { type: String, required: true },
   descripcion: { type: String, required: true },
-  premioPrincipal: { type: String, required: true },
+  premios: [{ descripcion: String, condiciones: String, required: true }],
   fechaInicio: { type: Date, required: true },
   fechaSorteo: { type: Date, required: true },
   condiciones: { type: String, required: true },
