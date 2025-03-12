@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import Admin from "@/models/Admin";
+import Admin from "@/models/mongodb/Admin";
 import connectDB from "@/lib/mongodb";
 import jwt from "jsonwebtoken";
 

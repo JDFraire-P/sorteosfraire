@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { randomUUID } from "crypto";
+import { nanoid } from "nanoid";
 
-// Función para generar un UID único de 10 caracteres alfanuméricos. Ejemplo: "aGB2c3DKe5"
-const generateUID = (): string => randomUUID().replace(/-/g, "").slice(0, 10);
+// Función para generar un UID único de 21 caracteres (Sera usado para una URL segura)
+export const generateUID = () => nanoid();	
 
 export interface IFolio extends Document {
   uid: string; // Identificador único del folio
-  cliente: mongoose.Types.ObjectId; // Referencia al cliente
   sorteo: mongoose.Types.ObjectId; // Referencia al sorteo
+  cliente: mongoose.Types.ObjectId; // Referencia al cliente
   boletos: number[]; // Números de boletos apartados
   total: number; // Total a pagar
   estado: "pendiente" | "pagado"; // Estado del pago del folio (apartado o confirmado)
@@ -16,10 +16,10 @@ export interface IFolio extends Document {
 }
 
 const FolioSchema = new Schema<IFolio>({
-  uid: { type: String, required: true, unique: true, default: generateUID },
-  cliente: { type: Schema.Types.ObjectId, ref: "Cliente", required: true },
+  uid: { type: String, required: true, unique: true},
   sorteo: { type: Schema.Types.ObjectId, ref: "Sorteo", required: true },
-  boletos: [{ type: Schema.Types.ObjectId, ref: "Boleto", required: true }],
+  cliente: { type: Schema.Types.ObjectId, ref: "Cliente", required: true },
+  boletos: { type: [Number], required: true },
   total: { type: Number, required: true },
   estado: { type: String, enum: ["pendiente", "pagado"], default: "pendiente" },
   fechaCreacion: { type: Date, default: Date.now },

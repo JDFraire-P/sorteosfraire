@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { estadosMX, estados_mx } from "@/models/estadosMX";
+import { estadosMX, estados_mx } from "@/models/types/estadosMX";
 
 export interface ICliente extends Document {
   telefono: string;

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import connectDB from "@/lib/mongodb"; // Función para conectar a MongoDB
-import Admin from "@/models/Admin";
-import Sorteo from "@/models/Sorteo";
-import Cliente, { ICliente } from "@/models/Cliente";
-import Folio from "@/models/Folio";
+import Admin from "@/models/mongodb/Admin";
+import Sorteo from "@/models/mongodb/Sorteo";
+import Cliente, { ICliente } from "@/models/mongodb/Cliente";
+import Folio from "@/models/mongodb/Folio";
 import Boleto from "@/models/Boleto";
 import { randomUUID } from "crypto";
 

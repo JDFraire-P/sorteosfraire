@@ -16,18 +16,53 @@ if (!MONGODB_URI) {
   );
 }
 
+let isConnected = false;
+
 const connectDB = async () => {
+  if (isConnected) return;
+
   try {
-    if (mongoose.connection.readyState >= 1) {
-      return;
-    }
-    
     await mongoose.connect(MONGODB_URI);
+    isConnected = true;
     console.log("📦 Conexión a MongoDB establecida");
+
+    // Manejadores de eventos para la conexión
+    mongoose.connection.on('error', err => {
+      console.error('❌ Error en la conexión de MongoDB:', err);
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      console.log('🔌 Desconexión de MongoDB');
+    });
+
+    // Manejadores para cierre graceful de la aplicación
+    process.on('SIGINT', async () => {
+      await disconnectDB();
+      process.exit(0);
+    });
+
+    process.on('SIGTERM', async () => {
+      await disconnectDB();
+      process.exit(0);
+    });
+
   } catch (error) {
     console.error("❌ Error conectando a MongoDB:", error);
-    process.exit(1);
+    throw error;
   }
 };
 
-export default connectDB;
+const disconnectDB = async () => {
+  if (!isConnected) return;
+
+  try {
+    await mongoose.disconnect();
+    isConnected = false;
+    console.log('📤 Conexión a MongoDB cerrada correctamente');
+  } catch (error) {
+    console.error('❌ Error al cerrar la conexión de MongoDB:', error);
+    throw error;
+  }
+};
+
+export { connectDB, disconnectDB };

@@ -1,11 +1,21 @@
 import Redis from "ioredis";
+import dotenv from "dotenv";
+import path from "path";
 
-const redis = new Redis(process.env.REDIS_URL!);
+// Ensure dotenv is configured with the correct path
+dotenv.config({ 
+  path: path.resolve(process.cwd(), '.env.local') 
+});
 
-export async function seleccionarBoleto(boletoId: string, clienteId: string) {
-  await redis.setex(`boleto:${boletoId}`, 60, clienteId); // Expira en 1 min
+const REDIS_URI = process.env.REDIS_URI;
+
+if (!REDIS_URI) {
+  throw new Error(
+    "⚠️ La variable de entorno REDIS_URI no está definida en .env.local\n" +
+    "Asegúrate de crear el archivo .env.local con la variable REDIS_URI"
+  );
 }
 
-export async function liberarBoleto(boletoId: string) {
-  await redis.del(`boleto:${boletoId}`);
-}
+const redis = new Redis(REDIS_URI);
+
+export default redis;
